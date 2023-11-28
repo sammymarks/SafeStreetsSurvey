@@ -1,13 +1,24 @@
 import React from 'react';
 import { Link, useParams, useNavigate, Routes, Route } from "react-router-dom"
 import NavBar from './NavBar';
-import Authentication from '../Misc/authentication';
+import LoginButton from '../Archive/LoginButton';
+import LogoutButton from '../Auth0/LogoutButton';
+
+
 
 const Header = () => {
-    return (
+  const navigate = useNavigate();
+  
+  const goToProfile = () => {
+    navigate()
+  }
+
+  return (
         <div className="Header">
           <h5>This is Header</h5>
-          <Authentication />
+          <LoginButton />
+          <LogoutButton />
+          <button onClick={() => navigate('/profile')}>Profile</button>
           <NavBar />
         </div>
     );

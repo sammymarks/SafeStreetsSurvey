@@ -14,10 +14,6 @@ import Main from './components/App/Main';
 import Footer from './components/App/Footer';
 
 
-import Authentication from './components/Misc/authentication'
-import UserProfile from './components/Misc/userprofile'
-import BootstrapTest from './components/Misc/bootstrapcards';
-
 
 function App() {
 //   const {isAuthenticated, getAccessTokenSilently} = useAuth0()

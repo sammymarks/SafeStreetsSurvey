@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, useParams, useNavigate, Routes, Route } from "react-router-dom"
 import Home from '../Main/Home';
 import Callback from '../Main/Callback';
-import UserProfile from '../Misc/userprofile';
+import Profile from '../Auth0/Profile'
+
 
 
 
@@ -13,7 +14,7 @@ const Main = () => {
             <Routes>
                 <Route path="/" element={<Home/>} />
                 <Route path="/callback" element={<Callback/>} />
-                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/profile" element={<Profile />} />
             </Routes>
         </div>
     );
