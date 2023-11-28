@@ -6,10 +6,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 //Auth0
-// const authCheck = require('./authCheck');
-const { auth } = require('express-oauth2-jwt-bearer');
-// const jwt = require('express-jwt');
-// const jwks = require('jwks-rsa');
+
 
 
 //Controllers
@@ -37,27 +34,6 @@ app.use(cors({
 
 //Auth0 middleware
 
-const jwtCheck = auth({
-    audience: 'http://localhost:3001/',
-    issuerBaseURL: 'https://dev-gep4yvt6w6o0kdbq.us.auth0.com/',
-    tokenSigningAlg: 'RS256'
-  });
-  // enforce on all endpoints
-app.use(jwtCheck);
-
-
-
-// const authCheck = jwt({
-//     secret: jwks.expressJwtSecret({
-//       cache: true,
-//       rateLimit: true,
-//       jwksRequestsPerMinute: 5,
-//       jwksUri: `https://dev-gep4yvt6w6o0kdbq.us.auth0.com/.well-known/jwks.json`,
-//     }),
-//     audience: 'http://localhost:3001/',
-//     issuer: `https://dev-gep4yvt6w6o0kdbq.us.auth0.com/`,
-//     algorithms: ['RS256'],
-//   });
   
   
 
@@ -65,16 +41,6 @@ app.use(jwtCheck);
 
 //-------CRUD------- 
 //Auth0
-
-app.get('/authorized', function (req, res) {
-    res.send('Secured Resource');
-});
-
-
-// app.get('/api/protected', authCheck, (req, res) => {
-//     // Handle the protected endpoint logic
-//     res.json({ message: 'You accessed a protected endpoint!' });
-//   });
   
 
 
