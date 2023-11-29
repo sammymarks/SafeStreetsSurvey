@@ -1,0 +1,18 @@
+.App {
+  display: grid;
+  min-height: 100vh;
+  grid-template-rows: max-content 1fr;
+}
+
+.Body {
+  display: grid;
+  grid-template-rows: 1fr max-content;
+}
+
+.Main {
+  background-color: #23E1CE;
+}
+
+.Footer {
+  background-color: #026C71;
+}
