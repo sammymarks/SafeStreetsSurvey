@@ -17,7 +17,8 @@ function App() {
       isSiteAdmin: false,
       isOrgAdmin: false
   });
-
+  const [ userProjects, setUserProjects ] = useState([])
+  const [ userTickets, setUserTickets ] = useState([])
   console.log(loggedInUser)
 
 
@@ -25,7 +26,9 @@ function App() {
     <div className='App'>
       <DataContext.Provider value={{
         loggedInUser, setLoggedInUser,
-        dbBaseURL, setDbBaseURL  
+        dbBaseURL, setDbBaseURL,
+        userProjects, setUserProjects,
+        userTickets, setUserTickets  
       }}>
         <Header />
         <Body />

@@ -32,9 +32,10 @@ export default function Header () {
     //Auth0
     const { user, isAuthenticated, isLoading, getAccessTokenSilently, loginWithRedirect, logout } = useAuth0();
     //useContext
-    const { loggedInUser, setLoggedInUser, dbBaseURL, setDbBaseURL } = useContext(DataContext);
+    const { loggedInUser, setLoggedInUser, dbBaseURL, setDbBaseURL, userProjects, setUserProjects,
+      userTickets, setUserTickets  } = useContext(DataContext);
 
-    //Lookup database user based on Auth0 user.sub
+    //Lookup database user based on Auth0 user.sub. If no user, create new user. Pull user data, user projects, and user tickets.
     const lookupDBUserWithAuth0 = async () => {
       //VITE_DB_BASE_URL = "http://localhost:3001/"
       const token = await getAccessTokenSilently()
@@ -50,9 +51,10 @@ export default function Header () {
           auth0sub: user.sub,
         }
       })
-      // console.log(response.data)
-      setLoggedInUser(response.data)
-      console.log("Signed In", loggedInUser)
+      console.log("userInfo:",response.data)
+      setLoggedInUser(response.data.user)
+      setUserProjects(response.data.projects)
+      setUserTickets(response.data.tickets)
     }
 
     //Logout and reset useState
@@ -64,6 +66,8 @@ export default function Header () {
         isSiteAdmin: false,
         isOrgAdmin: false
       })
+      setUserTickets([])
+      setUserProjects([])
       logout({ logoutParams: { returnTo: window.location.origin } })
       console.log("Signed Out", loggedInUser)
     }
@@ -75,6 +79,10 @@ export default function Header () {
         lookupDBUserWithAuth0()
       }
     }, [isAuthenticated, isLoading, user])
+
+      console.log("loggedInUser", loggedInUser)
+      console.log("userProjects", userProjects)
+      console.log("userTickets", userTickets)
 
     return (
         <div className='Header'>
