@@ -6,7 +6,9 @@
 
 .Body {
   display: grid;
-  grid-template-rows: 1fr max-content;
+  grid-template-rows: 1fr max-content;  
+  overflow: scroll;
+
 }
 
 .Main {
@@ -16,4 +18,8 @@
 
 .Footer {
   background-color: #026C71;
+}
+
+.NewTicket {
+  margin: 10px;
 }
