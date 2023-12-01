@@ -80,10 +80,6 @@ export default function Header () {
       }
     }, [isAuthenticated, isLoading, user])
 
-      console.log("loggedInUser", loggedInUser)
-      console.log("userProjects", userProjects)
-      console.log("userTickets", userTickets)
-
     return (
         <div className='Header'>
           <Navbar style={{backgroundColor: "#026C71"}}>
