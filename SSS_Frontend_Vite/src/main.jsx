@@ -7,7 +7,7 @@ import './index.css'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <Auth0Provider
       domain={import.meta.env.VITE_AUTH0_DOMAIN}
@@ -21,6 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <App />
       </Auth0Provider>
     </BrowserRouter>
-  // </React.StrictMode>
+  </React.StrictMode>
   ,
 )

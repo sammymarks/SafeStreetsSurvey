@@ -4,10 +4,7 @@ import DataContext from './components/App/DataContext';
 import Header from './components/App/Header';
 import Body from './components/App/Body';
 
-
-
 function App() {
-
   //useStates for useContext across App
   const [dbBaseURL, setDbBaseURL] = useState(import.meta.env.VITE_DB_BASE_URL)
   const [loggedInUser, setLoggedInUser] = useState({
