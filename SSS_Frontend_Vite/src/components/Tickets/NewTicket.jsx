@@ -193,7 +193,7 @@ export default function NewTicket () {
                             {mappedProject}
                         </Input>
                     </FormGroup>
-                    <Address />
+                    {/* <Address /> */}
                     
                     <FormGroup>
                         <Label for="emailText">Address</Label>
