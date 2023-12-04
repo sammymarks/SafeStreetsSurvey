@@ -1,11 +1,30 @@
+//GENERAL
 import React from "react"
-import { useState, useEffect, useContext } from 'react'
-import {Form, FormGroup, FormText, Label, Input, Button} from 'reactstrap'
-import { useAuth0 } from "@auth0/auth0-react";
-import imageCompression from "browser-image-compression";
+import { useState, useEffect, useContext, useMemo } from 'react'
 import axios from "axios";
+//REACTSTRAP
+import {Form, FormGroup, FormText, Label, Input, Button} from 'reactstrap'
+//AUTH0
+import { useAuth0 } from "@auth0/auth0-react" //AUTH0
+//IMAGE COMPRESSION
+import imageCompression from "browser-image-compression"
+//GOOGLE MAPS API
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
+import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete"
+//COMBOBOX
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxPopover,
+  ComboboxList,
+  ComboboxOption,
+  ComboboxOptionText,
+} from "@reach/combobox";
+import "@reach/combobox/styles.css";
+//COMPONENTS
 import DataContext from "../App/DataContext";
-import Address from "./Address"
+import NewTicketAddress from "./NewTicketAddress";
+import NewTicketMap from "./NewTicketMap";
 
 
 export default function NewTicket () {
@@ -24,9 +43,11 @@ export default function NewTicket () {
     })
     const [uploadImages, setUploadImages] = useState({ uploadFiles : "" })
     const [displayImages, setDisplayImages] = useState({ displayFiles : "" })
+    const [selectedAddress, setSelectedAddress] = useState(useMemo(() => ({lat: 41.983720, lng: -87.689710}), []))
 
 
-    //Map projects for selection
+
+    //.map projects for selection
     const mappedProject = userProjects.map((project, index) => {
         return <option key={index}>{project.name}</option>
     })
@@ -39,7 +60,7 @@ export default function NewTicket () {
     }
 
     const handleAddressChange = (address) => {
-        setNewTicket({...newTicket, addressLat: address, addressLong: address  })
+        setNewTicket({...newTicket, addressLat: selectedAddress.lat, addressLong: selectedAddress.lng })
     }
 
     const handleIssueChange = (event) => {
@@ -56,7 +77,7 @@ export default function NewTicket () {
         setNewTicket({...newTicket, comments: text  })
     }
 
-    //HANDLE SUBMIT
+    //HANDLE FORM SUBMIT
     const handleSubmitTicket = async (event) => {
         console.log(newTicket)
         console.log(uploadImages)
@@ -72,6 +93,15 @@ export default function NewTicket () {
             }
         })
         }
+
+    //GOOGLE MAPS API
+
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey : import.meta.env.VITE_GOOGLE_MAPS_PLACE_API_KEY,
+        libraries: ["places"],
+      })
+
+    
 
     //GET CURRENT LOCATION
     //https://www.tutorialspoint.com/html5/geolocation_getcurrentposition.htm
@@ -103,11 +133,12 @@ export default function NewTicket () {
         }
         
       }
-      
+    
+    //GOOGLE MAPS AUTOCOMPLETE
+
 
     //IMAGE UPLOADS
-    //File Upload and b64 conversion https://www.youtube.com/watch?v=pfxd7L1kzio
-    //Image compression https://imagekit.io/blog/image-compression-techniques-in-javascript/; https://www.npmjs.com/package/browser-image-compression
+    
 
     const fileToBase64 = (file) => {
         return new Promise((resolve, reject) => {      
@@ -194,14 +225,22 @@ export default function NewTicket () {
                         </Input>
                     </FormGroup>
                     {/* <Address /> */}
-                    
+                    {!isLoaded ? <div> Loading... </div> : 
                     <FormGroup>
-                        <Label for="emailText">Address</Label>
-                        <Input id="emailText" name="email" placeholder="Address" type="text"
-                            onChange={(event) => handleAddressChange(event.target.value)}
+                        <Label for="address">Address</Label>
+                        <NewTicketAddress id="emailText" name="email" 
+                            selectedAddress={selectedAddress} 
+                            setSelectedAddress={setSelectedAddress} 
+                            isLoaded={isLoaded}
                         />
-                        <Button onClick={() => getCurrentLocation()}>Get Current Location</Button>
+                        {/* <Button onClick={() => getCurrentLocation()}>Get Current Location</Button> */}
+                        <NewTicketMap 
+                            selectedAddress={selectedAddress} 
+                            setSelectedAddress={setSelectedAddress} 
+                            isLoaded={isLoaded}
+                        />
                     </FormGroup>
+}
                     <FormGroup>
                         <Label for="issueSelect"> Issue </Label>
                         <Input id="issueSelect" multiple name="issueSelect" type="select"
@@ -270,18 +309,7 @@ export default function NewTicket () {
 
             }
             
-            <h1>Demo - Native camera in browsers</h1>
 
-            <label htmlFor="cameraFileInput">
-            <span className="btn">Open camera</span>
-
-            <input
-                id="cameraFileInput"
-                type="file"
-                accept="image/*"
-                capture="environment"
-            />
-            </label>
             
         </div>
     )
