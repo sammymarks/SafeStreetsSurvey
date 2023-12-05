@@ -3,7 +3,7 @@ import React from "react"
 import axios from "axios"
 //Destructures
 import { useState, useEffect, useContext } from 'react'
-import { Link, Navigate } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import { useAuth0 } from "@auth0/auth0-react";
 //Assets
 import {Form, FormGroup, FormText, Label, Input, Button, Spinner, InputGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardTitle, CardText, CardSubtitle, Container, Col, Row} from 'reactstrap'
@@ -14,8 +14,9 @@ import dayjs from 'dayjs'
 import DataContext from "../App/DataContext";
 
 export default function BrowseProjects () {
+    const navigate = useNavigate()
     //UseContext
-    const { loggedInUser, setLoggedInUser, dbBaseURL, setDbBaseURL, userProjects, setUserProjects, userTickets, setUserTickets, allProjects, setAllProjects, allOrganizations, setAllOrganizations } = useContext(DataContext);
+    const { loggedInUser, setLoggedInUser, dbBaseURL, setDbBaseURL, userProjects, setUserProjects, userTickets, setUserTickets, allProjects, setAllProjects, allOrganizations, setAllOrganization, allTickets, setAllTickets } = useContext(DataContext);
 
     //UseStates
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
@@ -52,17 +53,28 @@ export default function BrowseProjects () {
                     <CardSubtitle className="mb-2 text-muted" tag="h6"> {project.organization.orgName} </CardSubtitle>
                     <CardText> {project.description} </CardText>
                     <Container fluid>
-                    <Row xs="2">
-                        <Col className="bg-light border" xs="4"> Start Date </Col>
-                        <Col > {dayjs(project.startDate).format('MMM D, YYYY')} </Col>
-                    </Row>
-                    <Row xs="2">
-                        <Col className="bg-light border" xs="4"> End Date </Col>
-                        <Col > {dayjs(project.endDate).format('MMM D, YYYY')} </Col>
-                    </Row>
+                        <Row >
+                            <Col className="bg-light border" xs="5"> Start </Col>
+                            <Col > {dayjs(project.startDate).format('MMM D, YYYY')} </Col>
+                        </Row>
+                        <Row xs="2">
+                            <Col className="bg-light border" xs="5"> End </Col>
+                            <Col > {dayjs(project.endDate).format('MMM D, YYYY')} </Col>
+                        </Row>
+                        <Row >
+                            <Col className="bg-light border" xs="5"> Contributors </Col>
+                            <Col > {project.userParticipants.length} </Col>
+                        </Row>
+                        <Row >
+                            <Col className="bg-light border" xs="5"> Tickets </Col>
+                            <Col > {allTickets.filter((ticket)=> ticket.project == project._id).length} </Col>
+                        </Row>
                     </Container>
                     <Button>
-                    Button
+                    Join Project
+                    </Button>
+                    <Button onClick={()=>navigate(`/projects/${project._id}`)}>
+                    Project Details
                     </Button>
                 </CardBody>
                 </Card>            
@@ -75,7 +87,7 @@ export default function BrowseProjects () {
     useEffect(() => {
         mapOrgDropdown()
         displayAllProjects()
-    }, [])
+    }, [allProjects])
         
     return (
         <div className="BrowseProjects">

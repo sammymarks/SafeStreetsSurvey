@@ -117,7 +117,7 @@ export default function Header () {
                   </> : null
                 }
                 <NavItem>
-                  <NavLink href="/browse-projects/">Browse Projects</NavLink>
+                  <NavLink href="/projects/">Browse Projects</NavLink>
                 </NavItem>
               </Nav>
             </Collapse>
