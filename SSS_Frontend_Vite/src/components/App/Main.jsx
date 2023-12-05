@@ -6,6 +6,7 @@ import Profile from '../User/UserProfile'
 import NewTicket from "../Tickets/NewTicket"
 import Home from "../Main/Home"
 import BrowseProjects from "../Projects/BrowseProjects"
+import ProjectDetails from "../Projects/ProjectDetails"
 
 export default function Main () {
 
@@ -15,7 +16,8 @@ export default function Main () {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/new-ticket" element={<NewTicket/>}/>
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/browse-projects" element={<BrowseProjects/>}/>
+                <Route path="/projects" element={<BrowseProjects/>}/>
+                <Route path="/projects/:id" element={<ProjectDetails/>}/>
             </Routes>
         </div>
     )

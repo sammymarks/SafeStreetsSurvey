@@ -25,6 +25,9 @@ function App() {
   const [ userTickets, setUserTickets ] = useState([])
   const [ allProjects, setAllProjects ] = useState([])
   const [ allOrganizations, setAllOrganizations ] = useState([])
+  const [ allTickets, setAllTickets ] = useState([])
+
+
 
   const getAllProjects = async () => {
     const response = await axios.get(`${dbBaseURL}projects`)
@@ -38,9 +41,16 @@ function App() {
     setAllOrganizations(response.data)
   }
 
+  const getAllTickets = async () => {
+    const response = await axios.get(`${dbBaseURL}tickets`)
+    console.log("allTickets",response.data)
+    setAllTickets(response.data)
+  }
+
   useEffect(() => {
     getAllProjects()
     getAllOrganizations()
+    getAllTickets()
   }, [])
 
   return (
@@ -51,7 +61,8 @@ function App() {
         userProjects, setUserProjects,
         userTickets, setUserTickets,
         allProjects, setAllProjects,
-        allOrganizations, setAllOrganizations  
+        allOrganizations, setAllOrganizations,
+        allTickets, setAllTickets  
       }}>
         <Header />
         <Body />

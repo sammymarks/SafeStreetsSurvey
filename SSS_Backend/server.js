@@ -63,15 +63,6 @@ app.get("/", (req, res) => res.send("This is Index"));
 app.get("/users", userController.getAll);
 app.post("/users/auth/check-user", jwtCheck, userController.getOrCreateByAuth0ID)
 
-// app.get("/users", userController.getAll);
-// app.get("/users/:id", userController.getByID);
-// app.get("/users/username/:username", userController.getByUsername)
-// app.get("/users/artist-search/:search", userController.searchArtist)
-
-// app.post("/users/create", userController.postCreate)
-// app.put("/users/update/:id/", userController.putUpdate)
-// app.delete("/users/:id", userController.deleteDelete)
-
 // Organization
 app.get("/organizations", organizationController.getAll);
 

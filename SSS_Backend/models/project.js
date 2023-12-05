@@ -9,6 +9,7 @@ const Project = new Schema(
         startDate: { type: Date, required: true },
         endDate: { type: Date, required: true },
         userParticipants: [{ type: Schema.Types.ObjectId, ref: 'User', required: false }],
+        tickets: [{ type: Schema.Types.ObjectId, ref: 'Ticket', required: false }],
     },
     { timestamps: true }
 )

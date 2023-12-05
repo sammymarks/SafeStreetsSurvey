@@ -9,6 +9,9 @@ module.exports = {
 async function getAll (req,res) {
     try {
         const projects = await Project.find()
+            .populate([
+                {path: "organization", model: Organization}
+            ]).exec()
         res.status(201).send(projects)
     } catch (e) {
         return res.status(500).json({ error: e.message })
