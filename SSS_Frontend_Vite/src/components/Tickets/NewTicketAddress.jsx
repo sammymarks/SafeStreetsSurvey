@@ -1,6 +1,6 @@
 import React from "react"
 import { useState, useEffect, useContext } from 'react'
-import {Form, FormGroup, FormText, Label, Input, Button} from 'reactstrap'
+import {Form, FormGroup, FormText, Label, Input, Button, Spinner} from 'reactstrap'
 import { useAuth0 } from "@auth0/auth0-react";
 import imageCompression from "browser-image-compression";
 import axios from "axios";
@@ -19,7 +19,7 @@ import {
   import "@reach/combobox/styles.css";
 
 
-export default function NewTicketAddress ({selectedAddress, setSelectedAddress, isLoaded}) {
+export default function NewTicketAddress ({selectedAddress, setSelectedAddress, isLoaded, newTicket, setNewTicket}) {
     
     
     const {
@@ -28,7 +28,10 @@ export default function NewTicketAddress ({selectedAddress, setSelectedAddress, 
         clearSuggestions
       } = usePlacesAutocomplete()
 
-    const handleSelect = async(address) => {
+    const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
+
+
+    const handleAddressSelect = async(address) => {
         //False = no additional data needed
         setValue(address, false)
         clearSuggestions()
@@ -54,13 +57,20 @@ export default function NewTicketAddress ({selectedAddress, setSelectedAddress, 
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
         console.log("Latitude : " + latitude + " Longitude: " + longitude);
-        const addressObj = await axios.get(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`)
-        console.log(addressObj.data.display_name)
+        const revGeocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_PLACE_API_KEY}`;
+
+        const response = await axios.get(revGeocodeURL)
+        let currentAddress = response.data.results[0].formatted_address
+        console.log(currentAddress)
+        handleAddressSelect(currentAddress)
+        setCurrentLocationLoading(false)
      }
 
 
      function getCurrentLocation () {
+        setCurrentLocationLoading(true)
         const locationObj = {lat: "", long: ""}
+        console.log("getCurrentLocation")
         if (navigator.geolocation) {
             console.log("location running")
             const options = {timeout:60000};
@@ -70,16 +80,19 @@ export default function NewTicketAddress ({selectedAddress, setSelectedAddress, 
         }
         
       }
+    
     if (!isLoaded) return  <div> Loading... </div>
 
     return (
         <div className="NewTicketAddress">
-            <Combobox onSelect={handleSelect}>
+            <Combobox onSelect={handleAddressSelect} className="new-ticket-combobox">
                 <ComboboxInput 
                     value={value} 
                     onChange={(e) => setValue(e.target.value)} 
                     disabled={!ready}
-                    placeholder='Search an Address'
+                    placeholder='5620 N Western Ave, Chicago, IL 60659'
+                    style={{ width: "100%" }}
+
                 />
                 <ComboboxPopover>
                     <ComboboxList>
@@ -90,9 +103,12 @@ export default function NewTicketAddress ({selectedAddress, setSelectedAddress, 
                     </ComboboxList>
                 </ComboboxPopover>
             </Combobox>
-            <Button 
+            <Button onClick={() => getCurrentLocation()}>Get Current Location</Button>
+            {currentLocationLoading ? <Spinner color="primary"  >Loading...</Spinner> : null}
+
+            {/* <Button 
             onClick={() => getCurrentLocation()}
-            >Get Current Location</Button>
+            >Get Current Location</Button> */}
         </div>
     )
 }
