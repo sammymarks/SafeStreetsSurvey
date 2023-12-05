@@ -102,9 +102,7 @@ export default function Header () {
                 {
                   isAuthenticated ?
                   <>
-                    <NavbarText>Logged in as {user.name} </NavbarText>
                     <NavbarText>Hello {loggedInUser.displayName} </NavbarText>
-
                     <NavItem>
                       <NavLink href="/profile/"> My Profile </NavLink>
                     </NavItem>
@@ -112,11 +110,14 @@ export default function Header () {
                       <NavLink 
                         onClick={() =>logoutAndReset()}
                       > Logout </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink href="/new-ticket/">New Ticket</NavLink>
                     </NavItem> 
                   </> : null
                 }
                 <NavItem>
-                  <NavLink href="/new-ticket/">New Ticket</NavLink>
+                  <NavLink href="/browse-projects/">Browse Projects</NavLink>
                 </NavItem>
               </Nav>
             </Collapse>

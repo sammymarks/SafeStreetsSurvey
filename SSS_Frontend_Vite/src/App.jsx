@@ -22,7 +22,11 @@ function App() {
   });
   const [ userProjects, setUserProjects ] = useState([])
   const [ userTickets, setUserTickets ] = useState([])
+  const [ allProjects, setAllProjects ] = useState([])
 
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <div className='App'>
@@ -30,7 +34,8 @@ function App() {
         loggedInUser, setLoggedInUser,
         dbBaseURL, setDbBaseURL,
         userProjects, setUserProjects,
-        userTickets, setUserTickets  
+        userTickets, setUserTickets,
+        allProjects, setAllProjects  
       }}>
         <Header />
         <Body />

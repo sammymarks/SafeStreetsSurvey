@@ -1,6 +1,7 @@
 //GENERAL
 import React from "react"
 import { useState, useEffect, useContext, useMemo } from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 //REACTSTRAP
 import {Form, FormGroup, FormText, Label, Input, Button, Spinner} from 'reactstrap'
@@ -32,16 +33,13 @@ export default function NewTicket () {
     const { user, isAuthenticated, isLoading, getAccessTokenSilently, loginWithRedirect, logout } = useAuth0();
     const { loggedInUser, setLoggedInUser, dbBaseURL, setDbBaseURL, userProjects, setUserProjects,
         userTickets, setUserTickets  } = useContext(DataContext);
+    const navigate = useNavigate();
+
     const [newTicket, setNewTicket] = useState({
         project: userProjects[0]._id,
         submittedBy: loggedInUser._id,
         addressLat: "",
         addressLong: "",
-        issue: [],
-        location: [],
-        comments: ""
-    })
-    const [switchState, setSwitchState] = useState({
         issue: {
             repairNeeded: false,
             dangerousConditions: false,
@@ -53,14 +51,28 @@ export default function NewTicket () {
             street: false,
             intersection: false,
             lighting: false,
-            other: false
-        }
+            other: false,
+        },
+        comments: ""
     })
+    // const [switchState, setSwitchState] = useState({
+    //     issue: {
+    //         repairNeeded: false,
+    //         dangerousConditions: false,
+    //         missingInfrastructure: false
+    //     },
+    //     location: {
+    //         sidewalk: false,
+    //         bikePath: false,
+    //         street: false,
+    //         intersection: false,
+    //         lighting: false,
+    //         other: false
+    //     }
+    // })
     const [uploadImages, setUploadImages] = useState({ uploadFiles : "" })
     const [displayImages, setDisplayImages] = useState({ displayFiles : "" })
     const [selectedAddress, setSelectedAddress] = useState({lat: 41.983720, lng: -87.689710})
-    // const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
-    // console.log(selectedAddress)
 
     //GOOGLE MAPS API
     //https://github.com/JustFly1984/react-google-maps-api/issues/238
@@ -82,20 +94,6 @@ export default function NewTicket () {
         setNewTicket({...newTicket, project: userProjects[index]._id} )
     }
 
-    const handleAddressChange = (address) => {
-        setNewTicket({...newTicket, addressLat: selectedAddress.lat, addressLong: selectedAddress.lng })
-    }
-
-    const handleIssueChange = (event) => {
-        const selected = Array.from(event.target.selectedOptions).map((option) => option.value);
-        setNewTicket({...newTicket, issue: selected  })
-    }
-
-    const handleLocationChange = (event) => {
-        const selected = Array.from(event.target.selectedOptions).map((option) => option.value);
-        setNewTicket({...newTicket, location: selected  })
-    }
-
     const handleCommentsChange = (text) => {
         setNewTicket({...newTicket, comments: text  })
     }
@@ -115,7 +113,8 @@ export default function NewTicket () {
             auth0sub: user.sub,
             }
         })
-        }
+        navigate("/profile")
+    }
 
     //IMAGE UPLOADS
     
@@ -180,8 +179,8 @@ export default function NewTicket () {
     }
 
     useEffect(() => {
-        console.log(switchState)
-    }, [switchState])
+        console.log(newTicket)
+    }, [newTicket])
 
 
     
@@ -225,86 +224,69 @@ export default function NewTicket () {
                     }
                     <FormGroup>
                         <Label for="issueSelect"> Issue (Select at least One)</Label>
-
-                        {/* <Input id="issueSelect" multiple name="issueSelect" type="select"
-                            onChange={handleIssueChange}
-                        >
-                            <option>Repair Needed</option>
-                            <option>Dangerous Conditions</option>
-                            <option>Missing Infrastructure</option>
-                        </Input> */}
                         <FormGroup switch>
                             <Input type="switch" role="switch"
-                            checked={switchState.issue.repairNeeded} 
-                            onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, repairNeeded: !switchState.issue.repairNeeded}})}}
+                            checked={newTicket.issue.repairNeeded} 
+                            onClick={()=>{setNewTicket({...newTicket, issue : {...newTicket.issue, repairNeeded: !newTicket.issue.repairNeeded}})}}
                             />
                             <Label check>Repair Needed</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.issue.dangerousConditions} 
-                                onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, dangerousConditions: !switchState.issue.dangerousConditions}})}}
+                                checked={newTicket.issue.dangerousConditions} 
+                                onClick={()=>{setNewTicket({...newTicket, issue : {...newTicket.issue, dangerousConditions: !newTicket.issue.dangerousConditions}})}}
                             />
                             <Label check>Dangerous Conditions</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.issue.missingInfrastructure} 
-                                onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, missingInfrastructure: !switchState.issue.missingInfrastructure}})}}
+                                checked={newTicket.issue.missingInfrastructure} 
+                                onClick={()=>{setNewTicket({...newTicket, issue : {...newTicket.issue, missingInfrastructure: !newTicket.issue.missingInfrastructure}})}}
                             />
                             <Label check>Missing Infrastructure</Label>
                         </FormGroup>
                     </FormGroup>
                     <FormGroup>
                         <Label for="locationSelect"> Location (Select at least one) </Label>
-                        {/* <Input id="locationSelect" multiple name="locationSelect" type="select"
-                        onChange={handleLocationChange}>
-                            <option>Sidewalk</option>
-                            <option>Bike Path</option>
-                            <option>Street</option>
-                            <option>Intersection</option>
-                            <option>Lighting</option>
-                            <option>{`Other (List in comments below)`}</option>
-                        </Input> */}
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.sidewalk} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, sidewalk: !switchState.location.sidewalk}})}}
+                                checked={newTicket.location.sidewalk} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, sidewalk: !newTicket.location.sidewalk}})}}
                             />
                             <Label check>Sidewalk</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.bikePath} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, bikePath: !switchState.location.bikePath}})}}
+                                checked={newTicket.location.bikePath} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, bikePath: !newTicket.location.bikePath}})}}
                             />
                             <Label check>Bike Path</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.street} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, street: !switchState.location.street}})}}
+                                checked={newTicket.location.street} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, street: !newTicket.location.street}})}}
                             />
                             <Label check>Street</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.intersection} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, intersection: !switchState.location.intersection}})}}
+                                checked={newTicket.location.intersection} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, intersection: !newTicket.location.intersection}})}}
                             />
                             <Label check>Intersection</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.lighting} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, lighting: !switchState.location.lighting}})}}
+                                checked={newTicket.location.lighting} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, lighting: !newTicket.location.lighting}})}}
                             />
                             <Label check>Lighting</Label>
                         </FormGroup>
                         <FormGroup switch>
                             <Input type="switch" role="switch" 
-                                checked={switchState.location.other} 
-                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, other: !switchState.location.other}})}}
+                                checked={newTicket.location.other} 
+                                onClick={()=>{setNewTicket({...newTicket, location : {...newTicket.location, other: !newTicket.location.other}})}}
                             />
                             <Label check>Other (List in comments below)</Label>
                         </FormGroup>
