@@ -6,7 +6,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { auth } = require('express-oauth2-jwt-bearer');
 const axios = require('axios')
-
+const favicon = require('serve-favicon')
+const path = require('path') //path for the deployed application
 //Auth0
 
 
@@ -33,6 +34,7 @@ app.use(cors({
     origin: 'http://localhost:5173'
 }));
 //Set max docuement size
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({limit: '16mb'}) );
 app.use(bodyParser.urlencoded({
   limit: '16mb',
