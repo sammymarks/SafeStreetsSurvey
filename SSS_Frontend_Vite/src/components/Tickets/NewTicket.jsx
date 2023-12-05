@@ -3,7 +3,7 @@ import React from "react"
 import { useState, useEffect, useContext, useMemo } from 'react'
 import axios from "axios";
 //REACTSTRAP
-import {Form, FormGroup, FormText, Label, Input, Button} from 'reactstrap'
+import {Form, FormGroup, FormText, Label, Input, Button, Spinner} from 'reactstrap'
 //AUTH0
 import { useAuth0 } from "@auth0/auth0-react" //AUTH0
 //IMAGE COMPRESSION
@@ -41,11 +41,34 @@ export default function NewTicket () {
         location: [],
         comments: ""
     })
+    const [switchState, setSwitchState] = useState({
+        issue: {
+            repairNeeded: false,
+            dangerousConditions: false,
+            missingInfrastructure: false
+        },
+        location: {
+            sidewalk: false,
+            bikePath: false,
+            street: false,
+            intersection: false,
+            lighting: false,
+            other: false
+        }
+    })
     const [uploadImages, setUploadImages] = useState({ uploadFiles : "" })
     const [displayImages, setDisplayImages] = useState({ displayFiles : "" })
-    const [selectedAddress, setSelectedAddress] = useState(useMemo(() => ({lat: 41.983720, lng: -87.689710}), []))
+    const [selectedAddress, setSelectedAddress] = useState({lat: 41.983720, lng: -87.689710})
+    // const [currentLocationLoading, setCurrentLocationLoading] = useState(false)
+    // console.log(selectedAddress)
 
-
+    //GOOGLE MAPS API
+    //https://github.com/JustFly1984/react-google-maps-api/issues/238
+    const [ GMapsLibraries ] = useState(['places']);
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey : import.meta.env.VITE_GOOGLE_MAPS_PLACE_API_KEY,
+        libraries: GMapsLibraries
+      })
 
     //.map projects for selection
     const mappedProject = userProjects.map((project, index) => {
@@ -93,49 +116,6 @@ export default function NewTicket () {
             }
         })
         }
-
-    //GOOGLE MAPS API
-
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey : import.meta.env.VITE_GOOGLE_MAPS_PLACE_API_KEY,
-        libraries: ["places"],
-      })
-
-    
-
-    //GET CURRENT LOCATION
-    //https://www.tutorialspoint.com/html5/geolocation_getcurrentposition.htm
-    function locationErrorHandler(err) {
-        if(err.code == 1) {
-           alert("Error: Access is denied!");
-        } else if( err.code == 2) {
-           alert("Error: Position is unavailable!");
-        }
-     }
-
-     async function showLocation(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        console.log("Latitude : " + latitude + " Longitude: " + longitude);
-        const addressObj = await axios.get(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`)
-        console.log(addressObj.data.display_name)
-     }
-
-
-     function getCurrentLocation () {
-        const locationObj = {lat: "", long: ""}
-        if (navigator.geolocation) {
-            console.log("location running")
-            const options = {timeout:60000};
-            navigator.geolocation.getCurrentPosition(showLocation, locationErrorHandler, options);
-        } else {
-          alert("Geolocation is not supported by this browser.")
-        }
-        
-      }
-    
-    //GOOGLE MAPS AUTOCOMPLETE
-
 
     //IMAGE UPLOADS
     
@@ -199,9 +179,9 @@ export default function NewTicket () {
         setDisplayImages({...displayImages, displayFiles : b64ForDisplay })        
     }
 
-    // useEffect(() => {
-
-    // }, [uploadImages])
+    useEffect(() => {
+        console.log(switchState)
+    }, [switchState])
 
 
     
@@ -224,36 +204,60 @@ export default function NewTicket () {
                             {mappedProject}
                         </Input>
                     </FormGroup>
-                    {/* <Address /> */}
                     {!isLoaded ? <div> Loading... </div> : 
+                        <FormGroup>
+                            <Label for="address">Address</Label>
+                            <NewTicketAddress id="emailText" name="email" 
+                                selectedAddress={selectedAddress} 
+                                setSelectedAddress={setSelectedAddress} 
+                                isLoaded={isLoaded}
+                                newTicket={newTicket}
+                                setNewTicket={setNewTicket}
+                            />
+                            <NewTicketMap 
+                                selectedAddress={selectedAddress} 
+                                setSelectedAddress={setSelectedAddress} 
+                                isLoaded={isLoaded}
+                                newTicket={newTicket}
+                                setNewTicket={setNewTicket}
+                            />
+                        </FormGroup>
+                    }
                     <FormGroup>
-                        <Label for="address">Address</Label>
-                        <NewTicketAddress id="emailText" name="email" 
-                            selectedAddress={selectedAddress} 
-                            setSelectedAddress={setSelectedAddress} 
-                            isLoaded={isLoaded}
-                        />
-                        {/* <Button onClick={() => getCurrentLocation()}>Get Current Location</Button> */}
-                        <NewTicketMap 
-                            selectedAddress={selectedAddress} 
-                            setSelectedAddress={setSelectedAddress} 
-                            isLoaded={isLoaded}
-                        />
-                    </FormGroup>
-}
-                    <FormGroup>
-                        <Label for="issueSelect"> Issue </Label>
-                        <Input id="issueSelect" multiple name="issueSelect" type="select"
+                        <Label for="issueSelect"> Issue (Select at least One)</Label>
+
+                        {/* <Input id="issueSelect" multiple name="issueSelect" type="select"
                             onChange={handleIssueChange}
                         >
                             <option>Repair Needed</option>
                             <option>Dangerous Conditions</option>
                             <option>Missing Infrastructure</option>
-                        </Input>
+                        </Input> */}
+                        <FormGroup switch>
+                            <Input type="switch" role="switch"
+                            checked={switchState.issue.repairNeeded} 
+                            onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, repairNeeded: !switchState.issue.repairNeeded}})}}
+                            />
+                            <Label check>Repair Needed</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.issue.dangerousConditions} 
+                                onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, dangerousConditions: !switchState.issue.dangerousConditions}})}}
+                            />
+                            <Label check>Dangerous Conditions</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.issue.missingInfrastructure} 
+                                onClick={()=>{setSwitchState({...switchState, issue : {...switchState.issue, missingInfrastructure: !switchState.issue.missingInfrastructure}})}}
+                            />
+                            <Label check>Missing Infrastructure</Label>
+                        </FormGroup>
                     </FormGroup>
                     <FormGroup>
-                        <Label for="locationSelect"> Location </Label>
-                        <Input id="locationSelect" multiple name="locationSelect" type="select"
+                        <Label for="locationSelect"> Location (Select at least one) </Label>
+                        {/* <Input id="locationSelect" multiple name="locationSelect" type="select"
                         onChange={handleLocationChange}>
                             <option>Sidewalk</option>
                             <option>Bike Path</option>
@@ -261,7 +265,49 @@ export default function NewTicket () {
                             <option>Intersection</option>
                             <option>Lighting</option>
                             <option>{`Other (List in comments below)`}</option>
-                        </Input>
+                        </Input> */}
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.sidewalk} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, sidewalk: !switchState.location.sidewalk}})}}
+                            />
+                            <Label check>Sidewalk</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.bikePath} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, bikePath: !switchState.location.bikePath}})}}
+                            />
+                            <Label check>Bike Path</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.street} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, street: !switchState.location.street}})}}
+                            />
+                            <Label check>Street</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.intersection} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, intersection: !switchState.location.intersection}})}}
+                            />
+                            <Label check>Intersection</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.lighting} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, lighting: !switchState.location.lighting}})}}
+                            />
+                            <Label check>Lighting</Label>
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" 
+                                checked={switchState.location.other} 
+                                onClick={()=>{setSwitchState({...switchState, location : {...switchState.location, other: !switchState.location.other}})}}
+                            />
+                            <Label check>Other (List in comments below)</Label>
+                        </FormGroup>
                     </FormGroup>
                     <FormGroup>
                         <Label for="pictureFile">
