@@ -8,7 +8,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 //Assets
 import {Form, FormGroup, FormText, Label, Input, Button, Spinner, InputGroup, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardTitle, CardText, CardSubtitle, Container, Col, Row} from 'reactstrap'
 import Select from 'react-select'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 
 //Components
 import DataContext from "../App/DataContext";
@@ -53,14 +53,14 @@ export default function BrowseProjects () {
                     <CardSubtitle className="mb-2 text-muted" tag="h6"> {project.organization.orgName} </CardSubtitle>
                     <CardText> {project.description} </CardText>
                     <Container fluid>
-                        <Row >
+                        {/* <Row >
                             <Col className="bg-light border" xs="5"> Start </Col>
                             <Col > {dayjs(project.startDate).format('MMM D, YYYY')} </Col>
                         </Row>
                         <Row xs="2">
                             <Col className="bg-light border" xs="5"> End </Col>
                             <Col > {dayjs(project.endDate).format('MMM D, YYYY')} </Col>
-                        </Row>
+                        </Row> */}
                         <Row >
                             <Col className="bg-light border" xs="5"> Contributors </Col>
                             <Col > {project.userParticipants.length} </Col>
