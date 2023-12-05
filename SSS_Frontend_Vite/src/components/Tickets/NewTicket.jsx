@@ -4,7 +4,7 @@ import { useState, useEffect, useContext, useMemo } from 'react'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 //REACTSTRAP
-import {Form, FormGroup, FormText, Label, Input, Button, Spinner} from 'reactstrap'
+import {Form, FormGroup, FormText, Label, Input, Button, Spinner,} from 'reactstrap'
 //AUTH0
 import { useAuth0 } from "@auth0/auth0-react" //AUTH0
 //IMAGE COMPRESSION
@@ -55,21 +55,7 @@ export default function NewTicket () {
         },
         comments: ""
     })
-    // const [switchState, setSwitchState] = useState({
-    //     issue: {
-    //         repairNeeded: false,
-    //         dangerousConditions: false,
-    //         missingInfrastructure: false
-    //     },
-    //     location: {
-    //         sidewalk: false,
-    //         bikePath: false,
-    //         street: false,
-    //         intersection: false,
-    //         lighting: false,
-    //         other: false
-    //     }
-    // })
+
     const [uploadImages, setUploadImages] = useState({ uploadFiles : "" })
     const [displayImages, setDisplayImages] = useState({ displayFiles : "" })
     const [selectedAddress, setSelectedAddress] = useState({lat: 41.983720, lng: -87.689710})

@@ -1,5 +1,6 @@
 import { useState, createContext, useContext, useEffect } from 'react'
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
+import axios from 'axios';
 
 import './App.css'
 import DataContext from './components/App/DataContext';
@@ -23,9 +24,23 @@ function App() {
   const [ userProjects, setUserProjects ] = useState([])
   const [ userTickets, setUserTickets ] = useState([])
   const [ allProjects, setAllProjects ] = useState([])
+  const [ allOrganizations, setAllOrganizations ] = useState([])
+
+  const getAllProjects = async () => {
+    const response = await axios.get(`${dbBaseURL}projects`)
+    console.log("allProjects", response.data)
+    setAllProjects(response.data)
+  }
+
+  const getAllOrganizations = async () => {
+    const response = await axios.get(`${dbBaseURL}organizations`)
+    console.log("allOrganizations",response.data)
+    setAllOrganizations(response.data)
+  }
 
   useEffect(() => {
-    
+    getAllProjects()
+    getAllOrganizations()
   }, [])
 
   return (
@@ -35,7 +50,8 @@ function App() {
         dbBaseURL, setDbBaseURL,
         userProjects, setUserProjects,
         userTickets, setUserTickets,
-        allProjects, setAllProjects  
+        allProjects, setAllProjects,
+        allOrganizations, setAllOrganizations  
       }}>
         <Header />
         <Body />
