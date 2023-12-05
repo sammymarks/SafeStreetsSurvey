@@ -1,6 +1,6 @@
 import React from "react"
 import { useState, useEffect, useContext } from 'react'
-import {Form, FormGroup, FormText, Label, Input, Button, Spinner} from 'reactstrap'
+import {Form, FormGroup, FormText, Label, Input, Button, Spinner, InputGroup} from 'reactstrap'
 import { useAuth0 } from "@auth0/auth0-react";
 import imageCompression from "browser-image-compression";
 import axios from "axios";
@@ -85,30 +85,28 @@ export default function NewTicketAddress ({selectedAddress, setSelectedAddress, 
 
     return (
         <div className="NewTicketAddress">
-            <Combobox onSelect={handleAddressSelect} className="new-ticket-combobox">
-                <ComboboxInput 
-                    value={value} 
-                    onChange={(e) => setValue(e.target.value)} 
-                    disabled={!ready}
-                    placeholder='5620 N Western Ave, Chicago, IL 60659'
-                    style={{ width: "100%" }}
+            <InputGroup>
+                <Combobox onSelect={handleAddressSelect} className="new-ticket-combobox">
+                    <ComboboxInput 
+                        value={value} 
+                        onChange={(e) => setValue(e.target.value)} 
+                        disabled={!ready}
+                        placeholder='5620 N Western Ave, Chicago, IL 60659'
+                        style={{ width: "100%" }}
 
-                />
-                <ComboboxPopover>
-                    <ComboboxList>
-                    {status == "OK" && data.map(({place_id, description}) => <ComboboxOption 
-                        key={place_id} 
-                        value={description}
-                    />)}
-                    </ComboboxList>
-                </ComboboxPopover>
-            </Combobox>
-            <Button onClick={() => getCurrentLocation()}>Get Current Location</Button>
-            {currentLocationLoading ? <Spinner color="primary"  >Loading...</Spinner> : null}
-
-            {/* <Button 
-            onClick={() => getCurrentLocation()}
-            >Get Current Location</Button> */}
+                    />
+                    <ComboboxPopover>
+                        <ComboboxList>
+                        {status == "OK" && data.map(({place_id, description}) => <ComboboxOption 
+                            key={place_id} 
+                            value={description}
+                        />)}
+                        </ComboboxList>
+                    </ComboboxPopover>
+                </Combobox>
+                <Button onClick={() => getCurrentLocation()}>Get Current Location</Button>
+                {currentLocationLoading ? <Spinner color="primary"  >Loading...</Spinner> : null}
+            </InputGroup>
         </div>
     )
 }
